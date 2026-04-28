@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -67,7 +68,12 @@ class Settings:
         if hasattr(self, "_initialized"):
             return
         self._initialized = True
-        self._dir = Path(platformdirs.user_data_dir(APP_NAME, APP_AUTHOR))
+        data_dir = os.environ.get("PERSONACORE_DATA_DIR")
+        self._dir = (
+            Path(data_dir)
+            if data_dir
+            else Path(platformdirs.user_data_dir(APP_NAME, APP_AUTHOR))
+        )
         self._dir.mkdir(parents=True, exist_ok=True)
         self._path = self._dir / "settings.json"
         self._data: dict[str, Any] = {}

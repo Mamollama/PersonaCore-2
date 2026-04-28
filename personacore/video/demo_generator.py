@@ -114,38 +114,32 @@ def _render_frame(
     palette: list[tuple[int, int, int]],
     prompt: str,
 ) -> np.ndarray:
-    frame = np.zeros((h, w, 3), dtype=np.float32)
+    y, x = np.mgrid[0:h, 0:w].astype(np.float32)
+    cx, cy = w / 2, h / 2
+    dx = (x - cx) / max(w, 1)
+    dy = (y - cy) / max(h, 1)
 
-    # Animated gradient background
-    for y in range(h):
-        for x in range(w):
-            # Swirling gradient based on t
-            cx, cy = w / 2, h / 2
-            dx, dy = (x - cx) / w, (y - cy) / h
-            angle = math.atan2(dy, dx) + t * math.pi * 2
-            radius = math.sqrt(dx**2 + dy**2)
+    angle = np.arctan2(dy, dx) + t * math.tau
+    radius = np.sqrt(dx**2 + dy**2)
 
-            wave = math.sin(angle * 3 + t * 6) * 0.5 + 0.5
-            wave2 = math.sin(radius * 8 - t * 4) * 0.5 + 0.5
-            blend = wave * 0.6 + wave2 * 0.4
+    wave = np.sin(angle * 3 + t * 6) * 0.5 + 0.5
+    wave2 = np.sin(radius * 8 - t * 4) * 0.5 + 0.5
+    blend = wave * 0.6 + wave2 * 0.4
+    blend_3d = blend[..., np.newaxis]
 
-            c1 = np.array(palette[0], dtype=np.float32)
-            c2 = np.array(palette[1], dtype=np.float32)
-            c3 = np.array(palette[2], dtype=np.float32)
+    c1 = np.array(palette[0], dtype=np.float32)
+    c2 = np.array(palette[1], dtype=np.float32)
+    c3 = np.array(palette[2], dtype=np.float32)
 
-            if blend < 0.5:
-                color = c1 * (1 - blend * 2) + c2 * (blend * 2)
-            else:
-                color = c2 * (1 - (blend - 0.5) * 2) + c3 * ((blend - 0.5) * 2)
+    lower = c1 * (1 - blend_3d * 2) + c2 * (blend_3d * 2)
+    upper = c2 * (1 - (blend_3d - 0.5) * 2) + c3 * ((blend_3d - 0.5) * 2)
+    frame = np.where(blend_3d < 0.5, lower, upper)
 
-            # Vignette
-            vignette = 1.0 - radius * 1.2
-            vignette = max(0.0, vignette)
-            frame[y, x] = color * vignette
+    vignette = np.clip(1.0 - radius * 1.2, 0.0, 1.0)
+    frame *= vignette[..., np.newaxis]
 
     # Add scan line effect
-    for y in range(0, h, 4):
-        frame[y] *= 0.85
+    frame[::4] *= 0.85
 
     return np.clip(frame, 0, 255).astype(np.uint8)
 

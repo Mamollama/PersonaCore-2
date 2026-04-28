@@ -17,19 +17,21 @@ class LogLevel(IntEnum):
     CRITICAL = logging.CRITICAL
 
 
-class _QtLogHandler(logging.Handler, QObject):
-    """Bridge between Python's logging and Qt signals."""
-
+class _QtLogEmitter(QObject):
     log_emitted = pyqtSignal(int, str, str)  # level, name, message
 
+
+class _QtLogHandler(logging.Handler):
+    """Bridge between Python's logging and Qt signals."""
+
     def __init__(self) -> None:
-        logging.Handler.__init__(self)
-        QObject.__init__(self)
+        super().__init__()
+        self.emitter = _QtLogEmitter()
 
     def emit(self, record: logging.LogRecord) -> None:
         try:
             msg = self.format(record)
-            self.log_emitted.emit(record.levelno, record.name, msg)
+            self.emitter.log_emitted.emit(record.levelno, record.name, msg)
         except Exception:  # noqa: BLE001
             self.handleError(record)
 
@@ -64,10 +66,10 @@ class AppLogger(QObject):
         self._handler.setFormatter(fmt)
         self._root.addHandler(self._handler)
 
-        qt_handler = _QtLogHandler()
-        qt_handler.setFormatter(fmt)
-        qt_handler.log_emitted.connect(self.log_emitted)
-        self._root.addHandler(qt_handler)
+        self._qt_handler = _QtLogHandler()
+        self._qt_handler.setFormatter(fmt)
+        self._qt_handler.emitter.log_emitted.connect(self.log_emitted)
+        self._root.addHandler(self._qt_handler)
 
         self._callbacks: list[Callable[[int, str, str], None]] = []
 

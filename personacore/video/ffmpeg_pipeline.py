@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import shutil
 import subprocess
+from fractions import Fraction
 from pathlib import Path
 
 from personacore.logging_module import get_logger
@@ -149,8 +150,9 @@ class FFmpegPipeline:
 
     def get_video_info(self, video_path: Path) -> dict:
         if not self._ffprobe:
-            return {}
+            return _opencv_video_info(video_path)
         import json
+
         cmd = [
             self._ffprobe, "-v", "quiet",
             "-print_format", "json",
@@ -165,13 +167,13 @@ class FFmpegPipeline:
             return {
                 "width": video.get("width", 0),
                 "height": video.get("height", 0),
-                "fps": eval(video.get("r_frame_rate", "0/1")),  # e.g. "24/1"
+                "fps": float(Fraction(video.get("r_frame_rate", "0/1"))),
                 "duration": float(video.get("duration", 0)),
                 "codec": video.get("codec_name", ""),
             }
         except Exception as e:
             log.warning("ffprobe failed: %s", e)
-            return {}
+            return _opencv_video_info(video_path)
 
     def _run(self, cmd: list[str]) -> bool:
         log.debug("FFmpeg: %s", " ".join(cmd[:6]) + "...")
@@ -191,3 +193,27 @@ class FFmpegPipeline:
         except Exception as e:
             log.error("FFmpeg exception: %s", e)
             return False
+
+
+def _opencv_video_info(video_path: Path) -> dict:
+    try:
+        import cv2
+
+        cap = cv2.VideoCapture(str(video_path))
+        if not cap.isOpened():
+            return {}
+
+        fps = cap.get(cv2.CAP_PROP_FPS) or 0
+        frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0
+        info = {
+            "width": int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) or 0),
+            "height": int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0),
+            "fps": float(fps),
+            "duration": float(frame_count / fps) if fps else 0.0,
+            "codec": "",
+        }
+        cap.release()
+        return info
+    except Exception as e:
+        log.warning("OpenCV video probe failed: %s", e)
+        return {}
