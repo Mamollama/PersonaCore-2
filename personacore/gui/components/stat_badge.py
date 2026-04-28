@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QColor, QPainter, QPainterPath, QBrush
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QLabel
+from PyQt6.QtGui import QBrush, QColor, QPainter, QPainterPath
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QWidget
 
 from personacore.gui.theme import Colors
 
@@ -28,7 +27,10 @@ class StatBadge(QWidget):
         self._label = QLabel(label)
         self._label.setStyleSheet(f"color: {Colors.TEXT_MUTED}; font-size: 9px; font-weight: 600;")
         self._value = QLabel(value)
-        self._value.setStyleSheet(f"color: {accent}; font-size: 10px; font-weight: 700; font-family: 'JetBrains Mono';")
+        self._value.setStyleSheet(
+            f"color: {accent}; font-size: 10px; font-weight: 700; "
+            "font-family: 'JetBrains Mono';"
+        )
 
         layout.addWidget(self._label)
         layout.addWidget(self._value)

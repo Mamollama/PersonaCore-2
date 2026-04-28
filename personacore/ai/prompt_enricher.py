@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Generator
 
 from personacore.logging_module import get_logger
+
 from .ollama_client import OllamaClient, OllamaError
 from .personas import Persona
 
@@ -31,7 +32,7 @@ class PromptEnricher:
         raw_prompt: str,
         model: str,
         persona: Persona,
-        cancelled: "list[bool] | None" = None,
+        cancelled: list[bool] | None = None,
     ) -> Generator[str, None, None]:
         """Stream enriched prompt chunks. Yields text chunks as they arrive."""
 
@@ -65,7 +66,6 @@ class PromptEnricher:
 
     def extract_technical_prompt(self, enriched: str) -> str:
         """Extract the TECHNICAL PROMPT section from enriched output."""
-        marker = "**TECHNICAL PROMPT**"
         idx = enriched.upper().find("TECHNICAL PROMPT")
         if idx == -1:
             # Return last paragraph as fallback

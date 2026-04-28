@@ -2,17 +2,16 @@
 
 from __future__ import annotations
 
-import sys
 import os
+import sys
 
 
 def main() -> None:
     # High-DPI support must be set before QApplication
     os.environ.setdefault("QT_ENABLE_HIGHDPI_SCALING", "1")
 
+    from PyQt6.QtCore import QCoreApplication
     from PyQt6.QtWidgets import QApplication
-    from PyQt6.QtCore import Qt, QCoreApplication
-    from PyQt6.QtGui import QIcon
 
     QCoreApplication.setApplicationName("PersonaCore 2")
     QCoreApplication.setOrganizationName("PersonaCore")

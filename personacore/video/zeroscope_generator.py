@@ -5,9 +5,11 @@ Requires: torch, diffusers, transformers, accelerate
 
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
 
 from personacore.logging_module import get_logger
+
 from .base_generator import BaseVideoGenerator, GenerationParams, GenerationResult
 from .ffmpeg_pipeline import FFmpegPipeline
 
@@ -25,12 +27,10 @@ class ZeroscopeGenerator(BaseVideoGenerator):
         self._pipe = None
 
     def is_available(self) -> bool:
-        try:
-            import torch
-            import diffusers
-            return True
-        except ImportError:
-            return False
+        return (
+            importlib.util.find_spec("diffusers") is not None
+            and importlib.util.find_spec("torch") is not None
+        )
 
     def setup(self) -> None:
         if self._pipe is not None:
@@ -59,8 +59,8 @@ class ZeroscopeGenerator(BaseVideoGenerator):
         if self._pipe is None:
             self.setup()
 
-        import torch
         import numpy as np
+        import torch
         from PIL import Image
 
         output_dir.mkdir(parents=True, exist_ok=True)

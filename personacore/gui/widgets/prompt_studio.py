@@ -3,19 +3,29 @@
 from __future__ import annotations
 
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QFont, QColor, QTextCharFormat, QTextCursor
+from PyQt6.QtGui import QFont, QTextCursor
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTextEdit,
-    QSplitter, QSizePolicy, QPushButton, QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSplitter,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
+from personacore.gui.components import GlowButton
 from personacore.gui.theme import Colors
-from personacore.gui.components import GlowButton, GlassPanel
-from personacore.gui.animations import PulseAnimation
 
 
 class _PanelHeader(QWidget):
-    def __init__(self, title: str, subtitle: str = "", accent: str = Colors.VIOLET, parent=None) -> None:
+    def __init__(
+        self,
+        title: str,
+        subtitle: str = "",
+        accent: str = Colors.VIOLET,
+        parent=None,
+    ) -> None:
         super().__init__(parent)
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -94,7 +104,9 @@ class PromptStudio(QWidget):
         raw_layout = QVBoxLayout(raw_panel)
         raw_layout.setContentsMargins(0, 0, 0, 0)
         raw_layout.setSpacing(6)
-        raw_layout.addWidget(_PanelHeader("Your Concept", "Describe your video idea", Colors.VIOLET))
+        raw_layout.addWidget(
+            _PanelHeader("Your Concept", "Describe your video idea", Colors.VIOLET)
+        )
 
         self._raw_input = QTextEdit()
         self._raw_input.setPlaceholderText(

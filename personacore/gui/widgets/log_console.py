@@ -4,15 +4,18 @@ from __future__ import annotations
 
 import logging
 
-from PyQt6.QtCore import Qt, pyqtSlot, QTimer
-from PyQt6.QtGui import QColor, QTextCursor, QTextCharFormat, QFont
+from PyQt6.QtCore import QTimer
+from PyQt6.QtGui import QColor, QFont, QTextCharFormat, QTextCursor
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QTextEdit, QSizePolicy, QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
 from personacore.gui.theme import Colors
-
 
 _LEVEL_COLORS = {
     logging.DEBUG:    Colors.LOG_DEBUG,
@@ -185,7 +188,6 @@ class LogConsole(QWidget):
 
         for level, name, message in batch:
             color = _LEVEL_COLORS.get(level, Colors.TEXT_SECONDARY)
-            level_str = _LEVEL_LABELS.get(level, "???")
 
             fmt = QTextCharFormat()
             fmt.setForeground(QColor(color))

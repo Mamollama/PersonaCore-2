@@ -3,18 +3,18 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
-from PyQt6.QtGui import QColor, QPainter, QPainterPath, QBrush, QPen, QFont
+from PyQt6.QtGui import QBrush, QColor, QPainter, QPen
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy,
+    QHBoxLayout,
+    QLabel,
+    QVBoxLayout,
+    QWidget,
 )
 
 from personacore.gui.theme import Colors
-from personacore.gui.animations import PulseAnimation
-
 
 STEPS = [
     ("enrich",    "Enriching",   Colors.VIOLET),
@@ -34,7 +34,7 @@ class StepState:
     color: str
     status: str = "idle"   # idle | active | done | error | cancelled
     elapsed: float = 0.0
-    start_time: Optional[float] = None
+    start_time: float | None = None
 
 
 class _StepDot(QWidget):
@@ -158,7 +158,10 @@ class StepTracker(QWidget):
 
             tlbl = QLabel("")
             tlbl.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-            tlbl.setStyleSheet(f"color: {Colors.TEXT_DISABLED}; font-size: 8px; font-family: 'JetBrains Mono';")
+            tlbl.setStyleSheet(
+                f"color: {Colors.TEXT_DISABLED}; font-size: 8px; "
+                "font-family: 'JetBrains Mono';"
+            )
             self._time_labels.append(tlbl)
             step_layout.addWidget(tlbl)
 
@@ -216,7 +219,9 @@ class StepTracker(QWidget):
 
     def set_error(self, step_id: str | None = None) -> None:
         self._timer.stop()
-        target_id = step_id or (self._steps[self._current_idx].id if self._current_idx >= 0 else None)
+        target_id = step_id or (
+            self._steps[self._current_idx].id if self._current_idx >= 0 else None
+        )
         for i, s in enumerate(self._steps):
             if s.id == target_id:
                 s.status = "error"

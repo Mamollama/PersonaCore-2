@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import math
-
 from PyQt6.QtCore import QTimer
-from PyQt6.QtGui import QColor, QPainter, QPainterPath, QConicalGradient
+from PyQt6.QtGui import QColor, QConicalGradient, QPainter, QPainterPath
 from PyQt6.QtWidgets import QWidget
 
 from personacore.gui.theme import Colors

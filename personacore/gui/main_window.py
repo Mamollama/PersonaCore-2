@@ -2,46 +2,42 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
-from PyQt6.QtCore import Qt, QTimer, QSize, pyqtSignal
-from PyQt6.QtGui import QIcon, QColor, QPalette
+import psutil
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QSplitter, QStatusBar, QLabel, QProgressBar,
-    QFileDialog, QMessageBox, QApplication,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QSplitter,
+    QVBoxLayout,
+    QWidget,
 )
 
-from personacore.gui.theme import Colors, Fonts
-from personacore.gui.widgets.title_bar import TitleBar
-from personacore.gui.widgets.sidebar import SidebarPanel
-from personacore.gui.widgets.prompt_studio import PromptStudio
-from personacore.gui.widgets.step_tracker import StepTracker
-from personacore.gui.widgets.settings_panel import SettingsPanel
-from personacore.gui.widgets.log_console import LogConsole
-from personacore.gui.widgets.video_preview import VideoPreviewWidget
-from personacore.gui.components import StatBadge
-from personacore.gui.animations import fade_in
-
-from personacore.ai.ollama_client import OllamaClient
 from personacore.ai.model_manager import ModelManager
+from personacore.ai.ollama_client import OllamaClient
 from personacore.ai.personas import PersonaManager
 from personacore.ai.prompt_enricher import PromptEnricher
-
+from personacore.config.settings import get_settings
+from personacore.export.exporter import Exporter, ExportFormat, ExportOptions
+from personacore.gui.animations import fade_in
+from personacore.gui.components import StatBadge
+from personacore.gui.theme import Colors
+from personacore.gui.widgets.log_console import LogConsole
+from personacore.gui.widgets.prompt_studio import PromptStudio
+from personacore.gui.widgets.settings_panel import SettingsPanel
+from personacore.gui.widgets.sidebar import SidebarPanel
+from personacore.gui.widgets.step_tracker import StepTracker
+from personacore.gui.widgets.title_bar import TitleBar
+from personacore.gui.widgets.video_preview import VideoPreviewWidget
+from personacore.logging_module.logger import get_app_logger, get_logger
+from personacore.project.project_manager import ProjectManager
 from personacore.video.registry import get_registry
-from personacore.video.base_generator import GenerationParams
-
 from personacore.workers.enrichment_worker import EnrichmentWorker
 from personacore.workers.generation_worker import GenerationWorker
 from personacore.workers.model_refresh_worker import ModelRefreshWorker
-
-from personacore.config.settings import get_settings
-from personacore.project.project_manager import ProjectManager
-from personacore.export.exporter import Exporter, ExportOptions, ExportFormat
-from personacore.logging_module.logger import get_app_logger, get_logger
-
-import psutil
 
 log = get_logger("ui.main")
 
@@ -528,9 +524,17 @@ class MainWindow(QWidget):
             self._show_error("No output", "Generate a video first.")
             return
 
-        fmt_enum = {"mp4": ExportFormat.MP4, "gif": ExportFormat.GIF, "webm": ExportFormat.WEBM}.get(fmt, ExportFormat.MP4)
+        fmt_enum = {
+            "mp4": ExportFormat.MP4,
+            "gif": ExportFormat.GIF,
+            "webm": ExportFormat.WEBM,
+        }.get(fmt, ExportFormat.MP4)
         ext = {"mp4": "mp4", "gif": "gif", "webm": "webm"}.get(fmt, "mp4")
-        filter_ = {"mp4": "MP4 Video (*.mp4)", "gif": "GIF Image (*.gif)", "webm": "WebM Video (*.webm)"}.get(fmt, "")
+        filter_ = {
+            "mp4": "MP4 Video (*.mp4)",
+            "gif": "GIF Image (*.gif)",
+            "webm": "WebM Video (*.webm)",
+        }.get(fmt, "")
 
         dest, _ = QFileDialog.getSaveFileName(
             self, "Export Video", str(Path.home() / f"personacore_export.{ext}"), filter_

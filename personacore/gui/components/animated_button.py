@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import math
 
-from PyQt6.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve, QRect
-from PyQt6.QtGui import QColor, QPainter, QPainterPath, QLinearGradient, QBrush, QPen, QFont
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QBrush, QColor, QFont, QLinearGradient, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import QPushButton, QWidget
 
 from personacore.gui.theme import Colors

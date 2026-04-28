@@ -2,25 +2,28 @@
 
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
 
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QUrl
-from PyQt6.QtGui import QColor, QPainter, QPainterPath, QBrush, QFont
+from PyQt6.QtCore import Qt, QTimer, QUrl
+from PyQt6.QtGui import QBrush, QColor, QFont, QPainter
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QSlider, QSizePolicy, QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSlider,
+    QVBoxLayout,
+    QWidget,
 )
 
 from personacore.gui.theme import Colors
 
 
 def _try_media_player():
-    try:
-        from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
-        from PyQt6.QtMultimediaWidgets import QVideoWidget
-        return True
-    except ImportError:
-        return False
+    return (
+        importlib.util.find_spec("PyQt6.QtMultimedia") is not None
+        and importlib.util.find_spec("PyQt6.QtMultimediaWidgets") is not None
+    )
 
 
 HAS_MULTIMEDIA = _try_media_player()
@@ -89,8 +92,8 @@ class _NoVideoPlaceholder(QWidget):
         # Play triangle
         painter.setBrush(QBrush(QColor("#FFFFFF")))
         tri_size = int(r * 0.55)
-        from PyQt6.QtGui import QPolygon
         from PyQt6.QtCore import QPoint
+        from PyQt6.QtGui import QPolygon
         tri = QPolygon([
             QPoint(cx - tri_size // 2, cy - tri_size),
             QPoint(cx - tri_size // 2, cy + tri_size),
@@ -186,7 +189,9 @@ class VideoPreviewWidget(QWidget):
         self._loop_btn.setStyleSheet(self._btn_style(Colors.CYAN))
 
         self._time_label = QLabel("0:00 / 0:00")
-        self._time_label.setStyleSheet(f"color: {Colors.TEXT_MUTED}; font-size: 9px; font-family: 'JetBrains Mono';")
+        self._time_label.setStyleSheet(
+            f"color: {Colors.TEXT_MUTED}; font-size: 9px; font-family: 'JetBrains Mono';"
+        )
 
         btn_row.addWidget(self._play_btn)
         btn_row.addWidget(self._stop_btn)
@@ -220,7 +225,7 @@ class VideoPreviewWidget(QWidget):
             return
 
         if HAS_MULTIMEDIA and self._video_widget:
-            from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
+            from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 
             if self._player:
                 self._player.stop()

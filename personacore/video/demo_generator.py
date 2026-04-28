@@ -5,13 +5,14 @@ No external model required. Used when no diffusion backend is available.
 
 from __future__ import annotations
 
+import importlib.util
 import math
-import time
 from pathlib import Path
 
 import numpy as np
 
 from personacore.logging_module import get_logger
+
 from .base_generator import BaseVideoGenerator, GenerationParams, GenerationResult
 from .ffmpeg_pipeline import FFmpegPipeline
 
@@ -24,12 +25,10 @@ class DemoGenerator(BaseVideoGenerator):
     requires_diffusers = False
 
     def is_available(self) -> bool:
-        try:
-            import cv2
-            import numpy
-            return True
-        except ImportError:
-            return False
+        return (
+            importlib.util.find_spec("cv2") is not None
+            and importlib.util.find_spec("numpy") is not None
+        )
 
     def generate(
         self,

@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from PyQt6.QtCore import Qt, QPoint, pyqtSignal
-from PyQt6.QtGui import QColor, QPainter, QPainterPath, QLinearGradient, QBrush, QFont
+from PyQt6.QtCore import QPoint, Qt, pyqtSignal
+from PyQt6.QtGui import QBrush, QColor, QLinearGradient, QPainter
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QLabel, QPushButton, QSizePolicy,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QWidget,
 )
 
 from personacore.gui.theme import Colors

@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Type
-
 from personacore.logging_module import get_logger
+
 from .base_generator import BaseVideoGenerator
 
 log = get_logger("video.registry")
@@ -14,13 +13,13 @@ class GeneratorRegistry:
     """Central registry for video generator backends."""
 
     def __init__(self) -> None:
-        self._backends: dict[str, Type[BaseVideoGenerator]] = {}
+        self._backends: dict[str, type[BaseVideoGenerator]] = {}
 
-    def register(self, backend_id: str, cls: Type[BaseVideoGenerator]) -> None:
+    def register(self, backend_id: str, cls: type[BaseVideoGenerator]) -> None:
         self._backends[backend_id] = cls
         log.debug("Registered video backend: %s -> %s", backend_id, cls.__name__)
 
-    def get(self, backend_id: str) -> Type[BaseVideoGenerator] | None:
+    def get(self, backend_id: str) -> type[BaseVideoGenerator] | None:
         return self._backends.get(backend_id)
 
     def create(self, backend_id: str) -> BaseVideoGenerator | None:

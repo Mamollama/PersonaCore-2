@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import shutil
 import uuid
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -41,7 +41,7 @@ class Project:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "Project":
+    def from_dict(cls, d: dict[str, Any]) -> Project:
         known = {k for k in cls.__dataclass_fields__}
         return cls(**{k: v for k, v in d.items() if k in known})
 

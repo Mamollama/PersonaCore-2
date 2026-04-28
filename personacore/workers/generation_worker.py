@@ -6,8 +6,8 @@ from pathlib import Path
 
 from PyQt6.QtCore import QThread, pyqtSignal
 
-from personacore.video.base_generator import BaseVideoGenerator, GenerationParams, GenerationResult
 from personacore.logging_module import get_logger
+from personacore.video.base_generator import BaseVideoGenerator, GenerationParams, GenerationResult
 
 log = get_logger("workers.generation")
 

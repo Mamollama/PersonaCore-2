@@ -56,9 +56,9 @@ _DEFAULTS: dict[str, Any] = {
 class Settings:
     """Persistent settings with nested attribute access and JSON storage."""
 
-    _instance: "Settings | None" = None
+    _instance: Settings | None = None
 
-    def __new__(cls) -> "Settings":
+    def __new__(cls) -> Settings:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance

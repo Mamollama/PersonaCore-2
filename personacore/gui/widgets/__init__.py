@@ -1,11 +1,3 @@
-from .title_bar import TitleBar
-from .sidebar import SidebarPanel
-from .prompt_studio import PromptStudio
-from .step_tracker import StepTracker
-from .settings_panel import SettingsPanel
-from .log_console import LogConsole
-from .video_preview import VideoPreviewWidget
-
 __all__ = [
     "TitleBar",
     "SidebarPanel",
@@ -15,3 +7,23 @@ __all__ = [
     "LogConsole",
     "VideoPreviewWidget",
 ]
+
+_EXPORTS = {
+    "TitleBar": (".title_bar", "TitleBar"),
+    "SidebarPanel": (".sidebar", "SidebarPanel"),
+    "PromptStudio": (".prompt_studio", "PromptStudio"),
+    "StepTracker": (".step_tracker", "StepTracker"),
+    "SettingsPanel": (".settings_panel", "SettingsPanel"),
+    "LogConsole": (".log_console", "LogConsole"),
+    "VideoPreviewWidget": (".video_preview", "VideoPreviewWidget"),
+}
+
+
+def __getattr__(name: str):
+    if name in _EXPORTS:
+        from importlib import import_module
+
+        module_name, attr_name = _EXPORTS[name]
+        module = import_module(module_name, __name__)
+        return getattr(module, attr_name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

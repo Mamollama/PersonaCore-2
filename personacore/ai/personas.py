@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -116,7 +116,7 @@ class Persona:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "Persona":
+    def from_dict(cls, d: dict[str, Any]) -> Persona:
         return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
 
 

@@ -3,14 +3,22 @@
 from __future__ import annotations
 
 from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSlider,
-    QSpinBox, QDoubleSpinBox, QComboBox, QPushButton,
-    QGroupBox, QFormLayout, QCheckBox, QScrollArea,
-    QSizePolicy, QTabWidget,
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QSlider,
+    QSpinBox,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
 )
 
-from PyQt6.QtGui import QStandardItemModel
 from personacore.gui.theme import Colors
 from personacore.video.base_generator import GenerationParams
 
@@ -89,8 +97,9 @@ class SettingsPanel(QWidget):
 
         # Backend
         self._add_section(gen_layout, "VIDEO BACKEND")
-        model = QStandardItemModel(self._backend_combo)
-        self._backend_combo.setModel(model)
+        self._backend_combo = QComboBox()
+        self._backend_model = QStandardItemModel(self._backend_combo)
+        self._backend_combo.setModel(self._backend_model)
         self._backend_combo.addItem("Demo (No Model)", "demo")
         self._backend_combo.addItem("Zeroscope v2", "zeroscope")
         self._backend_combo.addItem("AnimateDiff", "animatediff")
@@ -129,7 +138,7 @@ class SettingsPanel(QWidget):
 
         # Seed
         self._add_section(gen_layout, "SEED (-1 = RANDOM)")
-        self._seed_spin = self._make_spin(-1, 2**31, -1, "")
+        self._seed_spin = self._make_spin(-1, 2**31 - 1, -1, "")
         gen_layout.addWidget(self._seed_spin)
 
         # GPU
@@ -202,7 +211,14 @@ class SettingsPanel(QWidget):
         s.valueChanged.connect(self._emit_settings)
         return s
 
-    def _make_dspin(self, mn: float, mx: float, val: float, step: float, suffix: str) -> QDoubleSpinBox:
+    def _make_dspin(
+        self,
+        mn: float,
+        mx: float,
+        val: float,
+        step: float,
+        suffix: str,
+    ) -> QDoubleSpinBox:
         s = QDoubleSpinBox()
         s.setRange(mn, min(mx, 2**31 - 1))
         s.setValue(val)
@@ -225,7 +241,9 @@ class SettingsPanel(QWidget):
 
         val_lbl = QLabel(f"{val:.1f}" if not is_int else str(int(val)))
         val_lbl.setFixedWidth(36)
-        val_lbl.setStyleSheet(f"color: {Colors.CYAN}; font-size: 9px; font-family: 'JetBrains Mono';")
+        val_lbl.setStyleSheet(
+            f"color: {Colors.CYAN}; font-size: 9px; font-family: 'JetBrains Mono';"
+        )
 
         def _update(v):
             real = v / scale
@@ -236,7 +254,13 @@ class SettingsPanel(QWidget):
         row_l.addWidget(slider, stretch=1)
         row_l.addWidget(val_lbl)
 
-        return {"widget": row_w, "slider": slider, "label": val_lbl, "scale": scale, "is_int": is_int}
+        return {
+            "widget": row_w,
+            "slider": slider,
+            "label": val_lbl,
+            "scale": scale,
+            "is_int": is_int,
+        }
 
     def _on_preset_changed(self) -> None:
         preset_id = self._preset_combo.currentData()
@@ -255,8 +279,10 @@ class SettingsPanel(QWidget):
     def get_params_dict(self) -> dict:
         res = self._res_combo.currentData() or (512, 512)
         g_scale = self._guidance_row["slider"].value() / self._guidance_row["scale"]
-        steps = self._steps_row["slider"].value() // self._steps_row["scale"] if self._steps_row["is_int"] else \
-                self._steps_row["slider"].value() / self._steps_row["scale"]
+        if self._steps_row["is_int"]:
+            steps = self._steps_row["slider"].value() // self._steps_row["scale"]
+        else:
+            steps = self._steps_row["slider"].value() / self._steps_row["scale"]
         gpu_budget = self._gpu_budget["slider"].value() / self._gpu_budget["scale"]
 
         return {
@@ -277,7 +303,7 @@ class SettingsPanel(QWidget):
         return GenerationParams(
             prompt=prompt,
             negative_prompt=negative_prompt,
-            resolution=(d["resolution"], d["resolution"]),  # Ensure resolution is passed as a tuple
+            resolution=d["resolution"],
             fps=d["fps"],
             duration_seconds=d["duration_seconds"],
             guidance_scale=d["guidance_scale"],
@@ -296,7 +322,7 @@ class SettingsPanel(QWidget):
             self._backend_combo.addItem(label, bid)
             if not available:
                 idx = self._backend_combo.count() - 1
-                item = self._backend_combo.model().itemFromIndex(self._backend_combo.model().index(idx, 0))
+                item = self._backend_model.item(idx)
                 if item:
                     item.setEnabled(available)
         self._backend_combo.blockSignals(False)

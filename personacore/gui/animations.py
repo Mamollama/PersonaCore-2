@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 from PyQt6.QtCore import (
-    QPropertyAnimation, QEasingCurve, QParallelAnimationGroup,
-    QSequentialAnimationGroup, QTimer, pyqtProperty, QObject,
-    Qt, QRect,
+    QEasingCurve,
+    QObject,
+    QPropertyAnimation,
+    QRect,
+    QSequentialAnimationGroup,
+    QTimer,
 )
-from PyQt6.QtWidgets import QWidget, QGraphicsOpacityEffect
+from PyQt6.QtWidgets import QGraphicsOpacityEffect, QWidget
 
 
 def fade_in(widget: QWidget, duration: int = 250) -> QPropertyAnimation:
@@ -107,7 +110,6 @@ class GlowTimer(QObject):
         self._callbacks: list = []
 
     def _tick(self) -> None:
-        import math
         self._t += 0.05
         for cb in self._callbacks:
             cb(self._t)

@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import logging
-import sys
+from collections.abc import Callable
 from enum import IntEnum
-from typing import Callable
 
 from PyQt6.QtCore import QObject, pyqtSignal
 
@@ -42,7 +41,7 @@ class AppLogger(QObject):
 
     _instance: AppLogger | None = None
 
-    def __new__(cls) -> "AppLogger":
+    def __new__(cls) -> AppLogger:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance

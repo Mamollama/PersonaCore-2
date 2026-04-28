@@ -2,16 +2,22 @@
 
 from __future__ import annotations
 
-from PyQt6.QtCore import Qt, pyqtSignal, QSize
-from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QListWidget, QListWidgetItem, QComboBox, QFrame, QSizePolicy,
+    QComboBox,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QListWidget,
+    QListWidgetItem,
+    QPushButton,
     QScrollArea,
+    QVBoxLayout,
+    QWidget,
 )
 
-from personacore.gui.theme import Colors
 from personacore.gui.components import GlowButton
+from personacore.gui.theme import Colors
 
 
 class _SectionHeader(QWidget):

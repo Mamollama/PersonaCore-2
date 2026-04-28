@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 from personacore.logging_module import get_logger
@@ -12,7 +12,7 @@ from personacore.video.ffmpeg_pipeline import FFmpegPipeline
 log = get_logger("export")
 
 
-class ExportFormat(str, Enum):
+class ExportFormat(StrEnum):
     MP4 = "mp4"
     GIF = "gif"
     WEBM = "webm"

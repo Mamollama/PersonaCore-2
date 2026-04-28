@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from PyQt6.QtCore import QObject, pyqtSignal, QTimer
+from PyQt6.QtCore import QObject, QTimer, pyqtSignal
 
 from personacore.logging_module import get_logger
+
 from .ollama_client import OllamaClient, OllamaError
 
 log = get_logger("ai.models")

@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QColor, QPainter, QPainterPath, QPen, QBrush, QLinearGradient
-from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from PyQt6.QtGui import QBrush, QColor, QLinearGradient, QPainter, QPainterPath, QPen
+from PyQt6.QtWidgets import QVBoxLayout, QWidget
 
 from personacore.gui.theme import Colors
 

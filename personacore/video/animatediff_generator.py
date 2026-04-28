@@ -5,9 +5,11 @@ Requires: torch, diffusers>=0.25, transformers, accelerate
 
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
 
 from personacore.logging_module import get_logger
+
 from .base_generator import BaseVideoGenerator, GenerationParams, GenerationResult
 from .ffmpeg_pipeline import FFmpegPipeline
 
@@ -26,22 +28,17 @@ class AnimateDiffGenerator(BaseVideoGenerator):
         self._pipe = None
 
     def is_available(self) -> bool:
-        try:
-            import torch
-            import diffusers
-            return True
-        except ImportError:
-            return False
+        return (
+            importlib.util.find_spec("diffusers") is not None
+            and importlib.util.find_spec("torch") is not None
+        )
 
     def setup(self) -> None:
         if self._pipe is not None:
             return
 
         import torch
-        from diffusers import AnimateDiffPipeline, MotionAdapter, EulerDiscreteScheduler
-        from diffusers.utils import export_to_video
-        from huggingface_hub import hf_hub_download
-        from safetensors.torch import load_file
+        from diffusers import AnimateDiffPipeline, EulerDiscreteScheduler, MotionAdapter
 
         log.info("Loading AnimateDiff pipeline")
         dtype = torch.float16 if torch.cuda.is_available() else torch.float32
@@ -74,7 +71,6 @@ class AnimateDiffGenerator(BaseVideoGenerator):
             self.setup()
 
         import torch
-        from diffusers.utils import export_to_video
 
         output_dir.mkdir(parents=True, exist_ok=True)
 

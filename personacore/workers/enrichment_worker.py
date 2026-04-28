@@ -5,8 +5,8 @@ from __future__ import annotations
 from PyQt6.QtCore import QThread, pyqtSignal
 
 from personacore.ai.ollama_client import OllamaClient, OllamaError
-from personacore.ai.prompt_enricher import PromptEnricher
 from personacore.ai.personas import Persona
+from personacore.ai.prompt_enricher import PromptEnricher
 from personacore.logging_module import get_logger
 
 log = get_logger("workers.enrichment")
